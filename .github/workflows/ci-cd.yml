@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "feature-ai" ]   # run on commits to feature-ai
-    tags: [ "v*" ]               # run on release tags
-  workflow_dispatch:             # allow manual runs from Actions tab
+    branches: [ "feature-ai" ]
+    tags: [ "v*" ]
+  workflow_dispatch:
 
 env:
   SAMPLE_IMAGE: easygodevops/sample-app
@@ -73,7 +73,7 @@ jobs:
 
             # Install Docker Compose v2 if missing
             if ! command -v docker-compose &> /dev/null; then
-              sudo curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 \
+              sudo curl -SL https://github.com/docker/compose/releases/download/v2.27.1/docker-compose-linux-x86_64 \
                 -o /usr/local/bin/docker-compose
               sudo chmod +x /usr/local/bin/docker-compose
             fi
