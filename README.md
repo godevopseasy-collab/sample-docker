@@ -65,6 +65,10 @@ Stops/removes old container
 Runs new container on port 80
 =============================================================================
 
+After deployment we can also verify 
+<img width="763" height="333" alt="Sample docker deployment" src="https://github.com/user-attachments/assets/fc09b1cb-57c6-4306-9b94-72744697a4a8" />
+
+
 
 
 
