@@ -3,6 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]   # run when pushing tags like v1.0.1
   workflow_dispatch:   # allows manual trigger from Actions tab
 
 env:
@@ -29,7 +30,7 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
-            ${{ env.IMAGE_NAME }}:v1.0.0   # update manually when bumping version
+            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,12 +43,12 @@ jobs:
           username: ec2-user   # or ubuntu depending on your AMI
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # ensure docker group permissions are set
+            # ensure docker group permissions
             sudo usermod -aG docker ec2-user || true
             newgrp docker || true
 
             # pull and run container
-            docker pull ${{ env.IMAGE_NAME }}:latest
+            docker pull ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
             docker stop sample-app || true
             docker rm sample-app || true
-            docker run -d --name sample-app -p 80:3000 ${{ env.IMAGE_NAME }}:latest
+            docker run -d --name sample-app -p 80:3000 ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
