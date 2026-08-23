@@ -3,6 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:   # allows manual trigger from Actions tab
+
+env:
+  IMAGE_NAME: easygodevops/sample-app
 
 jobs:
   build:
@@ -22,7 +26,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: easygodevops/sample-app:latest
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:v1.0.0   # update manually when bumping version
 
   deploy:
     runs-on: ubuntu-latest
@@ -32,10 +39,15 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
+          username: ec2-user   # or ubuntu depending on your AMI
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull easygodevops/sample-app:latest
+            # ensure docker group permissions are set
+            sudo usermod -aG docker ec2-user || true
+            newgrp docker || true
+
+            # pull and run container
+            docker pull ${{ env.IMAGE_NAME }}:latest
             docker stop sample-app || true
             docker rm sample-app || true
-            docker run -d --name sample-app -p 80:3000 easygodevops/sample-app:latest
+            docker run -d --name sample-app -p 80:3000 ${{ env.IMAGE_NAME }}:latest
