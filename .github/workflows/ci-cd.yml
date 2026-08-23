@@ -63,7 +63,7 @@ jobs:
 
             # Clone repo with compose file
             rm -rf repo || true
-            git clone https://github.com/<your-username>/<your-repo>.git repo
+            git clone https://github.com/godevopseasy-collab/sample-docker.git repo
             cd repo
 
             # Install Docker Compose v2 if missing
