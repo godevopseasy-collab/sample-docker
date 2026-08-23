@@ -61,6 +61,11 @@ jobs:
             mkdir -p /home/ec2-user/app
             cd /home/ec2-user/app
 
+            # Install Git if missing
+            if ! command -v git &> /dev/null; then
+              sudo yum install -y git
+            fi
+
             # Clone repo with compose file
             rm -rf repo || true
             git clone https://github.com/godevopseasy-collab/sample-docker.git repo
@@ -85,4 +90,3 @@ jobs:
             sleep 10
             curl -f http://localhost/app || exit 1
             curl -f "http://localhost/ai?q=Hello" || exit 1
-          
